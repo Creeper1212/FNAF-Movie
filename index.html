@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FNAF Click Me</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #FF0000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            margin: 0;
+            position: relative;
+            animation: backgroundAnimation 10s linear infinite;
+        }
+
+        @keyframes backgroundAnimation {
+            0% { background-color: #000; }
+            50% { background-color: #222; }
+            100% { background-color: #000; }
+        }
+
+        .button-container {
+            position: relative;
+            text-align: center;
+            animation: flicker 2s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 1; }
+            20% { opacity: 0.8; }
+            40% { opacity: 0.6; }
+            60% { opacity: 0.9; }
+            80% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        .fnaf-button {
+            cursor: pointer;
+            transition: transform 0.1s;
+            width: 300px; /* Set a specific width for the image */
+            height: auto; /* Maintain aspect ratio */
+            animation: glitch 1s infinite; /* Apply glitch animation */
+            filter: brightness(0.9); /* Add slight brightness filter */
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            10% { transform: translate(-2px, 2px); }
+            20% { transform: translate(2px, -2px); }
+            30% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            50% { transform: translate(0); }
+            100% { transform: translate(0); }
+        }
+
+        .fnaf-button:active {
+            transform: scale(0.95); /* Scale down slightly on click */
+        }
+
+        .click-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #FFFFFF; /* White color for better contrast */
+            font-size: 36px; /* Larger font size */
+            font-weight: bold;
+            text-shadow: 0 0 10px #FF0000, 0 0 20px #FF0000; /* Enhanced glow effect */
+            transition: color 0.3s; /* Smooth transition for hover effect */
+            cursor: pointer; /* Change cursor to pointer */
+            filter: blur(1px); /* Add blur filter */
+        }
+
+        .click-text:hover {
+            color: #FF0000; /* Change text color on hover */
+            filter: blur(0); /* Remove blur on hover */
+        }
+
+        .hint {
+            font-size: 16px;
+            color: #FFF;
+            margin-top: 10px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        footer {
+            position: absolute;
+            bottom: 20px;
+            color: #FFF;
+            font-size: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <img src="Bonnie.png" class="fnaf-button" alt="Withered Bonnie" onclick="playClickSoundAndRedirect()" />
+        <div class="click-text" onclick="playClickSoundAndRedirect()">CLICK ME!</div> <!-- Make text clickable -->
+        <div class="hint">What could happen? Dare to find out!</div>
+    </div>
+
+    <audio id="click-sound" src="FNAF.mp3" preload="auto"></audio>
+
+    <script>
+        function playClickSoundAndRedirect() {
+            const sound = document.getElementById('click-sound');
+            sound.play();
+            setTimeout(() => {
+                window.location.href = 'movie.html'; // Redirect to movie.html after sound plays
+            }, 500); // Delay to allow the sound to play before redirecting
+        }
+    </script>
+
+    <footer>
+        &copy; 2024 FNAF Fan Page. All Rights Reserved.
+    </footer>
+</body>
+</html>

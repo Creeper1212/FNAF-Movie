@@ -1,0 +1,541 @@
+<html><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Five Nights at Freddy's - Security Protocol Active</title>
+
+<style>
+:root {
+  --purple-glow: rgba(157, 0, 255, 0.15);
+  --red-glow: rgba(255, 0, 0, 0.1);
+  --animatronic-metal: #1a1a1a;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Courier New', monospace;
+}
+
+body {
+  background-color: #050505;
+  color: #fff;
+  min-height: 100vh;
+  overflow-x: hidden;
+  animation: backgroundPulse 4s ease-in-out infinite;
+}
+
+@keyframes backgroundPulse {
+  0%, 100% { background-color: #050505; }
+  50% { background-color: #1a0a1a; }
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.title {
+  font-size: 3.5em;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: #fff;
+  text-shadow: 0 0 5px var(--red-glow);
+  animation: titleGlitch 6s ease-in-out infinite;
+}
+
+@keyframes titleGlitch {
+  0% { transform: none; filter: none; }
+  92% { transform: none; filter: none; }
+  93% { transform: translate(-2px, 3px); filter: url('#glitch'); }
+  94% { transform: translate(4px, -2px); filter: url('#glitch'); }
+  95% { transform: none; filter: none; }
+  96% { transform: translate(2px, 4px); filter: url('#glitch'); }
+  97% { transform: none; filter: none; }
+}
+
+.animatronic-border {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  border: 6px solid #222;
+  z-index: 1000;
+  box-shadow: inset 0 0 15px var(--purple-glow);
+  animation: borderGlitch 8s ease-in-out infinite;
+}
+
+@keyframes borderGlitch {
+  0%, 100% { border-color: #222; }
+  98% { border-color: var(--purple-glow); transform: translate(2px, -2px); }
+  99% { border-color: var(--red-glow); transform: translate(-2px, 2px); }
+}
+
+.scanner-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--purple-glow);
+  box-shadow: 0 0 20px var(--purple-glow),
+             0 0 40px var(--purple-glow);
+  animation: scan 4s linear infinite;
+  z-index: 1001;
+}
+
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.security-cam {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background: rgba(20, 20, 20, 0.9);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9em;
+  border: 1px solid var(--purple-glow);
+  box-shadow: 0 0 5px var(--purple-glow);
+}
+
+.rec-dot {
+  width: 8px;
+  height: 8px;
+  background: #ff6b6b;
+  border-radius: 50%;
+  animation: blink 2s infinite;
+}
+
+.power-status {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(20, 20, 20, 0.9);
+  padding: 10px 20px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9em;
+  border: 1px solid var(--purple-glow);
+  box-shadow: 0 0 5px var(--purple-glow);
+}
+
+.power-bar {
+  width: 100px;
+  height: 8px;
+  background: #444;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.power-level {
+  width: 100%;
+  height: 100%;
+  background: var(--purple-glow);
+  box-shadow: 0 0 10px var(--purple-glow);
+  animation: power-drain 60s linear infinite;
+}
+
+@keyframes power-drain {
+  0% { width: 100%; }
+  100% { width: 20%; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animatronic-eyes {
+  position: fixed;
+  width: 15px;
+  height: 15px;
+  background: var(--red-glow);
+  border-radius: 50%;
+  box-shadow: 0 0 20px var(--red-glow),
+             0 0 40px var(--red-glow);
+  animation: eyeFlicker 0.1s infinite;
+  z-index: 1002;
+}
+
+@keyframes eyeFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.static-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAA/Pz8/Pz8/Pz8/Pz8/Pz8/Pz8/Pz+3TG4HAAAACHRSTlMABgwQFBgeIiQsxl8AAACWSURBVDjLY2BAA4wlJSWMaIKcJSUlhUhySrxgUlJSAUlOEExKSkpCkpMFk5KSEpHkNMCkpKQwJDljMCkpyYgkFwAmJSWFIMk1gElJSS5IckZgUlKSEJJcAZiUlOSAJOcEJiUlGSHJRYBJSUl8SHJ5YFJSkhuSnAOYlJRkhiQXByYlJekhyZWASUlJYnBSEgDhFywR1fLuCAAAAABJRU5ErkJggg==');
+  opacity: 0.08;
+  animation: staticGlitch 0.5s infinite;
+  pointer-events: none;
+  z-index: 999;
+}
+
+@keyframes staticGlitch {
+  0% { opacity: 0.08; }
+  50% { opacity: 0.05; }
+  97% { opacity: 0.08; }
+  98% { opacity: 0.12; }
+  99% { opacity: 0.05; }
+}
+
+.warning {
+  color: #ff3333;
+  font-size: 1.2em;
+  margin: 20px 0;
+  text-align: center;
+  text-shadow: 0 0 8px rgba(255, 0, 0, 0.3);
+  animation: warningPulse 2s infinite;
+}
+
+@keyframes warningPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.video-container {
+  position: relative;
+  width: 90%;
+  margin: 20px auto;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  border: 4px solid var(--animatronic-metal);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+}
+
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.info-section {
+  margin: 40px auto;
+  max-width: 800px;
+  padding: 20px;
+  background: rgba(20, 20, 20, 0.8);
+  border: 2px solid var(--animatronic-metal);
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(157, 0, 255, 0.1);
+}
+
+.info-section h2 {
+  color: #fff;
+  font-size: 1.8em;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px var(--purple-glow);
+}
+
+.info-section p {
+  color: #ccc;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.character-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.character-card {
+  background: #1a1a1a;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid var(--purple-glow);
+  box-shadow: 0 0 10px rgba(157, 0, 255, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.character-card:hover {
+  transform: translateY(-5px);
+}
+
+.character-card h3 {
+  color: #fff;
+  margin-bottom: 10px;
+  text-shadow: 0 0 8px var(--purple-glow);
+}
+
+.character-card p {
+  color: #aaa;
+  font-size: 0.9em;
+}
+
+.footer {
+  text-align: center;
+  padding: 20px;
+  margin-top: 40px;
+  border-top: 2px solid var(--animatronic-metal);
+  color: #666;
+}
+
+</style>
+</head>
+<body>
+  <div class="static-overlay"></div>
+  <div class="scanner-line"></div>
+  <div class="animatronic-border"></div>
+  
+  <div class="security-cam">
+    <div class="rec-dot"></div>
+    <span>RECORDING</span>
+  </div>
+  
+  <div class="power-status">
+    <span>POWER:</span>
+    <div class="power-bar">
+      <div class="power-level"></div>
+    </div>
+  </div>
+  
+  <div class="container">
+    <header class="header">
+      <h1 class="title">Five Nights at Freddy's</h1>
+      <p class="warning">Security System Active</p>
+    </header>
+    
+    <div class="video-container">
+      <iframe 
+        src="https://drive.google.com/file/d/11jdNcfT0_O_2bDtj_ALcE9mWvKPYCYcI/preview"
+        frameborder="0"
+        allowfullscreen>
+      </iframe>
+    </div>
+    
+    <div class="info-section">
+      <h2>About the Movie</h2>
+      <p>A troubled security guard begins working at Freddy Fazbear's Pizza. During his first night on the job, he realizes that the night shift won't be so easy to get through, as the animatronic characters that entertain kids during the day play their own sinister games at night.</p>
+      
+      <div class="character-grid">
+        <div class="character-card">
+          <h3>Freddy Fazbear</h3>
+          <p>The main antagonist and mascot of the pizzeria. A large animatronic bear who becomes active at night.</p>
+        </div>
+        <div class="character-card">
+          <h3>Bonnie</h3>
+          <p>A purple animatronic bunny who carries a guitar and roams the halls after hours.</p>
+        </div>
+        <div class="character-card">
+          <h3>Chica</h3>
+          <p>A yellow animatronic chicken holding a cupcake, known for visiting the kitchen frequently.</p>
+        </div>
+        <div class="character-card">
+          <h3>Foxy</h3>
+          <p>A pirate fox animatronic who resides in Pirate Cove and runs incredibly fast when active.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="warning">
+      Monitoring Systems Online
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>© 2024 Five Nights at Freddy's Movie - Security System v2.0</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let glitchIntensity = 0;
+
+      // Ad Blocker Implementation
+      const adBlocker = {
+        init() {
+          // Common ad selectors
+          const adSelectors = [
+            '[class*="ad-"]',
+            '[class*="ads-"]',
+            '[class*="adsense"]',
+            '[id*="google_ads"]',
+            '[id*="banner"]',
+            'ins.adsbygoogle',
+            'div[aria-label*="advertisement"]',
+            'iframe[src*="doubleclick"]',
+            'iframe[src*="ads"]',
+            '.advertisement',
+            '#overlay_ad',
+            '.sponsored-content',
+            '.video-ads',
+            '.ad-container'
+          ];
+
+          // Initial cleanup
+          this.removeAds();
+
+          // Watch for new elements
+          this.observeNewAds();
+
+          // Clean iframes
+          this.cleanIframes();
+
+          // Block tracking scripts
+          this.blockTrackingScripts();
+
+          console.log('Ad blocker initialized');
+        },
+
+        removeAds() {
+          const adSelectors = [
+            '[class*="ad-"]',
+            '[class*="ads-"]',
+            '[id*="ads"]'
+          ].join(',');
+
+          document.querySelectorAll(adSelectors).forEach(el => {
+            el.remove();
+          });
+        },
+
+        observeNewAds() {
+          const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+              if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+                mutation.addedNodes.forEach((node) => {
+                  if (node.nodeType === 1) { // ELEMENT_NODE
+                    // Check if the new element matches ad patterns
+                    if (node.className?.includes('ad') || 
+                        node.id?.includes('ad') ||
+                        node.src?.includes('ads')) {
+                      node.remove();
+                    }
+                  }
+                });
+              }
+            });
+          });
+
+          observer.observe(document.body, {
+            childList: true,
+            subtree: true
+          });
+        },
+
+        cleanIframes() {
+          setInterval(() => {
+            const iframes = document.getElementsByTagName('iframe');
+            for (let frame of iframes) {
+              const src = frame.src.toLowerCase();
+              if (src.includes('ads') || 
+                  src.includes('banner') || 
+                  src.includes('doubleclick')) {
+                frame.remove();
+              }
+            }
+          }, 1000);
+        },
+
+        blockTrackingScripts() {
+          const scriptBlocker = {
+            apply: function(target, thisArg, args) {
+              const [src] = args;
+              if (src && typeof src === 'string') {
+                if (src.includes('ads') || 
+                    src.includes('analytics') || 
+                    src.includes('tracker')) {
+                  return undefined;
+                }
+              }
+              return target.apply(thisArg, args);
+            }
+          };
+
+          HTMLScriptElement.prototype.setAttribute = new Proxy(
+            HTMLScriptElement.prototype.setAttribute,
+            scriptBlocker
+          );
+        }
+      };
+
+      // Initialize ad blocker
+      adBlocker.init();
+
+      setInterval(() => {
+        if (Math.random() < 0.15) {
+          glitchIntensity = Math.random();
+          
+          document.body.style.transform = `translate(${Math.random() * 10 - 5}px, ${Math.random() * 10 - 5}px)`;
+          document.body.style.filter = `
+            blur(${glitchIntensity * 2}px)
+            hue-rotate(${Math.random() * 360}deg)
+            saturate(${150 + Math.random() * 100}%)
+          `;
+          
+          setTimeout(() => {
+            document.body.style.transform = 'none';
+            document.body.style.filter = 'none';
+          }, 50 + Math.random() * 100);
+        }
+      }, 2000);
+
+      const createAmbientSound = () => {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+        gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.2);
+        
+        oscillator.frequency.setValueAtTime(220, audioContext.currentTime);
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 0.2);
+      };
+
+      setInterval(() => {
+        if (Math.random() < 0.03) {
+          createAmbientSound();
+        }
+      }, 8000);
+      
+      const eyes = document.querySelectorAll('.animatronic-eyes');
+      eyes.forEach(eye => {
+        eye.style.transition = 'all 0.5s ease-in-out';
+      });
+      
+      setInterval(() => {
+        eyes.forEach(eye => {
+          if (Math.random() < 0.2) {
+            const x = Math.random() * 90 + 5;
+            const y = Math.random() * 90 + 5;
+            eye.style.left = `${x}%`;
+            eye.style.top = `${y}%`;
+          }
+        });
+      }, 4000);
+    });
+  </script>
+</body>
+</html>
